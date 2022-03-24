@@ -1,6 +1,6 @@
 # Building a game with Javascript
 
-Hosted by Tom Meulendijks and Pat Scullion, we've build a Lunar Lander spinoff during this episode of EU Tech Meetup in Maastricht.
+Hosted by Tom Meulendijks and Pat Scullion, we've build a Lunar Lander spinoff during [this episode of EU Tech Meetup](https://www.meetup.com/nl-NL/EuregioTechMeetup/events/284399713/) in Maastricht.
 
 <img src="assets/result.gif" alt="a screencapture of the the resulting javascript game" width="400">
 
