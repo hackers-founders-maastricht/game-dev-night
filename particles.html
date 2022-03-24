@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Particle Bounce!</title>
+	<style>
+* {
+	margin:0;
+	padding:0;
+	overflow:hidden;
+}
+canvas {
+	background: #000;
+}
+	</style>
+</head>
+<body>
+<script>
+// Create our canvas element
+let canvas = document.createElement("canvas");
+
+// Set our canvas size to match the size of our web browser window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Add the canvas element to our web page's body!
+document.body.appendChild(canvas);
+
+// Define our "context" (the method that we're going to use to draw on our canvas)
+let ctx = canvas.getContext("2d");
+
+// Prepare our particle array, and set our number of particles
+let particles = [];
+let particleCount = 50;
+
+// Create [particleCount] particles, spaced evenly across the entire width of the canvas, just below the top of the canvas.
+for (let i = 0; i < particleCount; i++) {
+	particles.push( 
+		new Particle( (canvas.width / particleCount) * i, 100) 
+	);
+}
+
+// Call our main loop 60 times a second (the second parameter of setInterval is 1/1000s of a second)
+let updater = setInterval(update, 1000/60);
+
+// Our main loop
+function update() {
+	// Clear the canvas with a full-sized "clear" rectangle (to prevent trails appearing all over the screen)
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	// A fun alternative to the clearRect above is to draw a semi-transparent box across the whole canvas, so the particles have a "fading" trail.
+	// Comment-out the clearRect above and uncomment the lines below to give it a try :-)
+	//ctx.fillStyle = "rgba(0,0,0,0.1)";
+	//ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	// Draw and move each of our particles
+	for (let i = 0; i < particleCount; i++) {
+		particles[i].draw();
+		particles[i].update();
+	}
+}
+
+// Our Particle class! When creating you must pass the initial x and y coordinates
+function Particle(x, y) {
+
+	// Define the Particle's variables - accessible to the rest of the particle
+	this.x = x;
+	this.y = y;
+	this.width = 10;
+	this.height = 10;
+	this.gravity = 0.1;
+	this.velocityY = Math.random() * -10; // Have some particles jump up more than others 
+
+	// Draw function
+	this.draw = function() {
+		ctx.fillStyle = "red"; // Change this to any CSS-compatible colour, as desired (e.g. "#dd99aa", "rgb(100,200,0)")
+		ctx.fillRect(this.x, this.y, this.width, this.height); // Draw our particle
+	}
+
+	// Update function
+	this.update = function() {
+		// Add our current verticle speed to our position
+		this.y = this.y + this.velocityY;
+
+		// Apply the force of gravity onto our verticle speed
+		this.velocityY += this.gravity;
+
+		// If the bottom of our particle hits the bottom of the sreen (and we're falling down)...
+		if (this.y > canvas.height - this.height && this.velocityY > 0) {
+
+			// ...bounce back off the bottom! (0.8 means the bounce height will be 80% of the original height)
+			this.velocityY = -this.velocityY * 0.8;
+		}
+	}
+
+}
+
+</script>
+</body>
+</html>
