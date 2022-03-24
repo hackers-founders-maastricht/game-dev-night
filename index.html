@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic game</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+  
+    </style>
+</head>
+<body>
+    <div class="screen">
+        <script>
+            var canvas = document.createElement('canvas')
+            document.body.appendChild(canvas)
+
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+
+            var c = canvas.getContext('2d')
+
+            setInterval(draw, 1000 / 60);
+
+            var particles = [];
+
+            var gamestate = {
+                playing: false,
+                win: false,
+                lost: false
+            }
+
+            var movingUp = false; 
+            var moveLeft = false; 
+            var moveRight = false; 
+
+            function init(){
+
+                for(var i=0; i<1; i++){
+                    particles.push(new Rectangle());
+                }
+               
+                document.addEventListener('keydown', onKeyDown);
+                document.addEventListener('keyup', onKeyUp);
+
+            }
+            
+
+            init();
+
+            function draw(){
+                
+                c.clearRect(0,0, canvas.width, canvas.height);
+
+                if(gamestate.playing) {
+
+                    
+                    particles.forEach(function(e, i){
+                        e.update();
+                        e.draw();
+                    })
+
+                }else {
+                    standby();
+                }
+                
+            }
+
+            function standby(){
+             
+                c.font = "bold 48px Helvetica";
+                c.textAlign ="center";
+                if(!gamestate.win && !gamestate.lost){
+                    c.fillText("Press space bar to start", canvas.width / 2, canvas.height / 2);
+                }else if (gamestate.win) {
+                    c.fillText("You Won!! Press space bar to start again", canvas.width / 2, canvas.height / 2);
+                }else{
+                    c.fillText("You Lost!! Press space bar to start again", canvas.width / 2, canvas.height / 2);
+                }
+               
+            }
+
+            function Rectangle () {
+         
+                this.width = 10;
+                this.height = 10;
+                this.posY = 100;
+                this.posX = 100;
+                this.velY = 0;
+                this.accY = 0.09;
+                this.velX = 2;
+                this.thrustY = 0;
+                this.thrustX = 0;
+
+                this.color = "#dd0000";
+                this.draw = function(){
+
+                    c.fillStyle = "#dd0000";
+                    c.fillRect( this.posX, this.posY, this.width, this.height);
+
+                }
+
+                this.update =  function(){
+
+                    this.posX += this.velX;
+                    this.posY += this.velY;
+                    this.velY += this.accY;
+                    this.velY -= this.thrustY;
+                    this.velX -= this.thrustX;
+
+                    if(this.velY > 10 ){
+                        this.velY = 10;
+                    }
+
+                    if(this.posY >= (canvas.height - this.height )){
+                        if(this.velY < 2){
+                            gamestate.lost = false;
+                            gamestate.win = true;
+                        }else{
+                            gamestate.lost = true;
+                            gamestate.win = false;
+                        }
+                       gamestate.playing = false;
+                    }
+
+                    if(movingUp){
+                        this.thrustY = 0.2;
+                    } else{
+                        this.thrustY = 0;
+                    }
+
+                    if(moveLeft){
+                        this.thrustX = 0.04;
+                    } else if(moveRight){
+                        this.thrustX = -0.04;
+                    } else {
+                        this.thrustX= 0;
+                    }
+                   
+                }
+                
+                
+
+            }
+
+        
+        
+            function onKeyDown(e) {	
+                if(gamestate.playing == false){
+                    if (e.keyCode == 32) {
+                        gamestate.playing = true;
+                        gamestate.lost = false;
+                            gamestate.won = false;
+                        particles = [];
+                        init();
+                     }
+                }
+               
+
+                if(e.keyCode == 38) movingUp = true; 
+                else if(e.keyCode == 37) moveLeft = true; 
+                else if (e.keyCode == 39) moveRight = true; 
+       
+               
+            }
+            function onKeyUp(e) {
+                if(e.keyCode == 38) movingUp = false; 
+                else if(e.keyCode == 37) moveLeft = false; 
+                else if (e.keyCode == 39) moveRight = false;
+            }
+         
+        </script>
+    </div>
+</body>
+</html>
